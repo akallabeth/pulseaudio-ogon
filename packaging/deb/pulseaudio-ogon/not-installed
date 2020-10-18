@@ -1,0 +1,12 @@
+etc/*
+usr/bin/*
+usr/include/*
+usr/share/*
+usr/lib/*/cmake/*
+usr/lib/*/pkgconfig/*
+usr/lib/*/pulseaudio/*
+usr/lib/*/*.so*
+usr/lib/*/*.la*
+usr/lib/*/*/modules/lib*
+usr/lib/*/*/modules/module-[a-n]*
+usr/lib/*/*/modules/module-[p-z]*

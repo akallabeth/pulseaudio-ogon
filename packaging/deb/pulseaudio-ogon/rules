@@ -1,0 +1,40 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+CFLAGS+=$(CPPFLAGS)
+CXXFLAGS+=$(CPPFLAGS)
+
+ifneq (,$(filter armhf,$(DEB_HOST_ARCH)))
+ARM_FLOAT_ABI = -DARM_FP_ABI=hard
+else
+ARM_FLOAT_ABI =
+endif
+
+NULL =
+
+DESTDIR = debian/tmp
+
+%:
+	dh $@ --parallel --with systemd
+
+.PHONY: override_dh_autoreconf override_dh_auto_configure override_dh_install override_dh_strip
+
+override_dh_autoreconf:
+	autopoint --force
+	AUTOPOINT='intltoolize --automake --copy' autoreconf --force --install --verbose
+
+override_dh_auto_configure:
+	dh_auto_configure -- --disable-gtk3 --disable-esound --enable-ogon --disable-oss-output --disable-oss-wrapper --disable-alsa --disable-jack --disable-xen --disable-tests --disable-udev --disable-glib2 --disable-avahi --disable-ipv6 --disable-openssl --enable-x11 --disable-systemd-journal --disable-systemd-daemon --disable-systemd-login --disable-orc --disable-webrtc-aec --disable-manpages --disable-bluez4 --disable-bluez5
+
+override_dh_install:
+	dh_install
+	dh_missing --fail-missing
+
+override_dh_strip:
+	dh_strip -ppulseaudio-ogon --dbg-package=pulseaudio-ogon-dbg
+
+override_dh_clean:
+	dh_clean
